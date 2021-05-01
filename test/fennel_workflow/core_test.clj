@@ -14,14 +14,12 @@
 
 (use-fixtures :once (fn [f]
                       (.mkdir (io/file output))
-                      (f) 
-                      delete-directory-recursive output)))
+                      (f)
+                      delete-directory-recursive output))
 
 (deftest fennel-to-lua
   (testing "Can compile single files as well as directory structures"
-    (-main "-p" input "-o" "/test/fennel_workflow/output" "-f")
+    (-main "-p" input "-o" "/test/fennel_workflow/output" "-f" "-v")
     (is (contains? (set (.list (io/file output))) "fibonacci.lua"))
     (is (contains? (set (.list (io/file (str output "/pong")))) "movement.lua"))
     (is (contains? (set (.list (io/file (str output "/pong" "/tree")))) "walk.lua"))))
-
-

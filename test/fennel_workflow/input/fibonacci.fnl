@@ -1,3 +1,4 @@
+;; Example taken from https://fennel-lang.org/see
 (fn fibonacci [n]
   (if (< n 2)
       n

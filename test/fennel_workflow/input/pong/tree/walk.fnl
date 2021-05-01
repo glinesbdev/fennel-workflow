@@ -1,3 +1,4 @@
+;; Example taken from https://fennel-lang.org/see
 (fn walk-tree [root f custom-iterator]
   (fn walk [iterfn parent idx node]
     (when (f idx node parent)
