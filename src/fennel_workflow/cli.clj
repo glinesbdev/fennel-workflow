@@ -2,13 +2,16 @@
   (:require [clojure.string :as string]
             [clojure.tools.cli :refer [parse-opts]]))
 
+(def user-dir (System/getProperty "user.dir"))
+
 (def cli-options
   [["-p" "--path PATH" "Path of .fnl files to be compiled."
-    :default "Default: ./src"
-    :parse-fn #(str (System/getProperty "user.dir") (or % "/src"))]
+    :default "./src"
+    :parse-fn #(str user-dir (or % "/src"))]
    ["-o" "--out PATH" "Path where the .lua files will get compiled to."
-    :default "Default: ./build"
-    :parse-fn #(str (System/getProperty "user.dir") (or % "/build"))]
+    :default "./build"
+    :parse-fn #(str user-dir (or % "/build"))]
+   ["-f" "--format" "Formats the lua output with LuaFormatter" :default false]
    ["-h" "--help"]])
 
 (defn usage [options-summary]

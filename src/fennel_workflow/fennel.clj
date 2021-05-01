@@ -3,30 +3,26 @@
             [clojure.string :as string]
             [clojure.java.shell :refer [sh]]))
 
-(def fennel (->> (reverse (.list (io/file "resources")))
+(def fennel (->> (reverse (.list (io/file "resources/3rd")))
                  (filter #(re-seq #"^fennel(-\d){3}\.lua$" %))
                  first))
 
-(defn- strip-ext [file]
-  (string/replace file #"(\.fnl)" ""))
+(defn- replace-ext [file]
+  (string/replace file #"(\.fnl)" ".lua"))
 
-(defn- output-file-name [output filename]
-  (->> (str filename ".lua")
-       (str output "/")))
-
-(defn- format-file-path [path file]
-  (str path "/" file))
-
-(defn- compile-cmd [path file]
-  (sh fennel "--compile" (format-file-path path file)))
+(defn- compile-cmd [path]
+  (:out (sh fennel "--compile" path)))
 
 (defn- compile-files [path]
-  (map (fn [file]
-         {:filename (strip-ext file)
-          :text (:out (compile-cmd path file))})
-       (.list (io/file path))))
+  (map (fn [tree]
+         (let [abs-path (.getAbsolutePath (io/file tree))]
+           (when (.isFile (io/file abs-path))
+             {:file-path (replace-ext abs-path)
+              :text (compile-cmd abs-path)})))
+       (file-seq (io/file path))))
 
 (defn write-files [path output]
-  (doseq [{:keys [filename text]} (compile-files path)]
-    (with-open [w (io/writer (output-file-name output filename) :append true)]
-      (.write w text))))
+  (doseq [{:keys [file-path text]} (filter (complement nil?) (compile-files path))]
+    (let [output-name (str (string/replace file-path path output))]
+      (io/make-parents output-name)
+      (spit output-name text))))

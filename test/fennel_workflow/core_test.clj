@@ -6,9 +6,22 @@
 (def input "/test/fennel_workflow/input")
 (def output (str (System/getProperty "user.dir") "/test/fennel_workflow/output"))
 
-(use-fixtures :once (fn [f] (f) (io/delete-file (str output "/fibonacci.lua"))))
+(defn delete-directory-recursive [file]
+  (when (.isDirectory (io/file file))
+    (doseq [file-in-dir (.listFiles (io/file file))]
+      (delete-directory-recursive file-in-dir)))
+  (io/delete-file file))
+
+(use-fixtures :once (fn [f]
+                      (.mkdir (io/file output))
+                      (f) 
+                      delete-directory-recursive output)))
 
 (deftest fennel-to-lua
-  (testing "Successfully compiles Fennel to Lua"
-    (-main "-p" input "-o" "/test/fennel_workflow/output")
-    (is (= (first (.list (io/file output))) "fibonacci.lua"))))
+  (testing "Can compile single files as well as directory structures"
+    (-main "-p" input "-o" "/test/fennel_workflow/output" "-f")
+    (is (contains? (set (.list (io/file output))) "fibonacci.lua"))
+    (is (contains? (set (.list (io/file (str output "/pong")))) "movement.lua"))
+    (is (contains? (set (.list (io/file (str output "/pong" "/tree")))) "walk.lua"))))
+
+
