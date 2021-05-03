@@ -2,8 +2,11 @@
   (:require [clojure.string :as string]
             [clojure.tools.cli :refer [parse-opts]]))
 
+;; Helper function to get the directory this program was run in.
 (def user-dir (System/getProperty "user.dir"))
 
+;; Options that show when either an error is encountered with the given options
+;; or when -h or --help is used.
 (def cli-options
   [["-p" "--path PATH" "Path of .fnl files to be compiled."
     :default "./src"
@@ -15,6 +18,7 @@
    ["-f" "--format" "Formats the lua output with LuaFormatter" :default false]
    ["-h" "--help"]])
 
+;; Outputs the usage of the program.
 (defn usage [options-summary]
   (->> ["Fennel to Lua workflow utility."
         ""
@@ -24,14 +28,17 @@
         options-summary]
        (string/join \newline)))
 
+;; Error message if an error is encountered.
 (defn error-msg [errors]
   (str "The following errors occurred while parsing your command:\n\n"
        (string/join \newline errors)))
 
+;; Command to exit the program.
 (defn exit [status msg]
   (println msg)
   (System/exit status))
 
+;; Validates the arguments given to the program.
 (defn validate-args [args]
   (let [{:keys [options errors summary]} (parse-opts args cli-options)]
     (cond
