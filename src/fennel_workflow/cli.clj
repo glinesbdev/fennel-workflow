@@ -13,7 +13,7 @@
     :parse-fn #(str user-dir (or % "/src"))]
    ["-o" "--out PATH" "Path where the .lua files will get compiled to."
     :default "out"
-    :parse-fn #(str user-dir (or % "/build"))]
+    :parse-fn #(str user-dir (or % "/out"))]
    ["-v" "--verbose" "Shows the build output." :default false]
    ["-f" "--format" "Formats the lua output with LuaFormatter" :default false]
    ["-h" "--help"]])

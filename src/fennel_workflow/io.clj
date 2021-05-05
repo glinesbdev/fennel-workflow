@@ -17,6 +17,6 @@
 (defn write-file
   "Write the current .lua file to disk.
    Respects folder structure and outputs the same structure."
-  [output text]
-  (io/make-parents output)
-  (spit output text))
+  [out text]
+  (io/make-parents out)
+  (spit out text))

@@ -4,8 +4,8 @@
             [fennel-workflow.core :refer [-main]]))
 
 (def input "/test/fennel_workflow/input")
-(def out-path "/test/fennel_workflow/output")
-(def output (str (System/getProperty "user.dir") out-path))
+(def out-path "/test/fennel_workflow/out")
+(def out (str (System/getProperty "user.dir") out-path))
 
 (defn delete-directory-recursive [file]
   (when (.isDirectory (io/file file))
@@ -14,19 +14,19 @@
   (io/delete-file file))
 
 (use-fixtures :once (fn [f]
-                      (.mkdir (io/file output))
+                      (.mkdir (io/file out))
                       (f)
-                      (delete-directory-recursive output)))
+                      (delete-directory-recursive out)))
 
 (deftest fennel-to-lua
   (testing "Can compile single files as well as directory structures"
     (-main "-p" input "-o" out-path)
-    (is (-> (str output "/fibonacci.lua")
+    (is (-> (str out "/fibonacci.lua")
             (io/as-file)
             .exists))
-    (is (-> (str output "/pong/movement.lua")
+    (is (-> (str out "/pong/movement.lua")
             (io/as-file)
             .exists))
-    (is (-> (str output "/pong/tree/walk.lua")
+    (is (-> (str out "/pong/tree/walk.lua")
             (io/as-file)
             .exists))))

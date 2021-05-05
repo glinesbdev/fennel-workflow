@@ -25,10 +25,10 @@
   (:out (sh local-fennel "--compile" path)))
 
 (defn compile-files
-  "Read all of the .fnl files inside the [path] and write it to [output].
+  "Read all of the .fnl files inside the [path] and write it to [out].
    If [verbose] is true, the build process is displayed.
    If [format] is true, LuaFormatter will format the Lua files inline."
-  [path output verbose format]
+  [{:keys [path out verbose format]}]
   (copy-fennel)
   (let [files (->> path
                    (io/file)
@@ -36,9 +36,9 @@
                    (filter #(.isFile (io/file %)))
                    (mapv #(.getAbsolutePath (io/file %))))]
     (doseq [file files]
-      (let [output-path (replace-ext (string/replace file path output))]
+      (let [out-path (replace-ext (string/replace file path out))]
         (when verbose
-          (println (str "Writing " output-path)))
-        (write-file output-path (compile-cmd file))
+          (println (str "Writing " out-path)))
+        (write-file out-path (compile-cmd file))
         (when format
-          (format-file output-path))))))
+          (format-file out-path))))))
