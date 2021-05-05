@@ -7,4 +7,5 @@
   (let [{:keys [exit-message ok?] {:keys [path out format verbose]} :options} (validate-args args)]
     (when exit-message
       (exit (if ok? 0 1) exit-message))
-    (compile-files path out verbose format)))
+    (compile-files path out verbose format)
+    (System/exit 0)))

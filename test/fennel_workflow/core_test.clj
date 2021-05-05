@@ -21,6 +21,12 @@
 (deftest fennel-to-lua
   (testing "Can compile single files as well as directory structures"
     (-main "-p" input "-o" out-path)
-    (is (contains? (set (.list (io/file output))) "fibonacci.lua"))
-    (is (contains? (set (.list (io/file (str output "/pong")))) "movement.lua"))
-    (is (contains? (set (.list (io/file (str output "/pong" "/tree")))) "walk.lua"))))
+    (is (-> (str output "/fibonacci.lua")
+            (io/as-file)
+            .exists))
+    (is (-> (str output "/pong/movement.lua")
+            (io/as-file)
+            .exists))
+    (is (-> (str output "/pong/tree/walk.lua")
+            (io/as-file)
+            .exists))))
